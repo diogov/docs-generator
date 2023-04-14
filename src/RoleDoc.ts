@@ -1,6 +1,9 @@
 import RoleSheet from './RoleSheet';
+import RoleDocRemoval from './RoleDocRemoval';
 
 export default class RoleDoc {
+
+    static readonly MIN_FONT_SIZE_SECTION_TITLE = 15 ;
 
     public static generateDoc(file, roleData: object) {
         const doc = DocumentApp.openById(file.getId());
@@ -15,7 +18,11 @@ export default class RoleDoc {
 
             RoleDoc.processParagraph(body, paragraph, key, roleData);
         });
+
+        RoleDocRemoval.removeSectionsContainingNoMatchedKeys(body);
         doc.saveAndClose();
+        
+        RoleDocRemoval.removeLastEmptyParagraphFromScriptToAvoidBlankPage(doc.getId());
     }
 
     private static processParagraph(body, paragraph, key: string | null, roleData: object): void {
@@ -35,32 +42,32 @@ export default class RoleDoc {
 
     private static processDescriptionParagraph(body, paragraph, pattr: object, roleData: object) {
         const ixElement = body.getChildIndex(paragraph);
-        paragraph.replaceText(RoleSheet.DESCRIPTION_KEY, '');
-
         const items = roleData[RoleSheet.DESCRIPTION_KEY];
         
-        let lastParagraph;
+        let intervalParagraph;
         let idxP = 1;        
         for (const itemText of items) {
             const linkObject = RoleSheet.getLinkObjectElementsOrNull(itemText);
             if (linkObject) {
-                lastParagraph = RoleDoc.addParagraphWithUrl(body, ixElement + idxP, itemText, linkObject, pattr);
+                intervalParagraph = RoleDoc.addParagraphWithUrl(body, ixElement + idxP, itemText, linkObject, pattr);
             }
             else {
                 const newParagraph = body.insertParagraph(ixElement + idxP, itemText);
                 newParagraph.setAttributes(pattr);
-                lastParagraph = body.insertParagraph(ixElement + idxP + 1, '');
-                lastParagraph.setAttributes(pattr);
+                intervalParagraph = body.insertParagraph(ixElement + idxP + 1, '');
+                intervalParagraph.setAttributes(pattr);
             }
             idxP+=2;
         }
-        body.removeChild(paragraph);
-        body.removeChild(lastParagraph);
+
+        if (items.length != 0) {
+            body.removeChild(paragraph);
+            body.removeChild(intervalParagraph);
+        }
     }
 
     private static processBulletPointParagraph(body, paragraph, pattr: object, key: string, roleData: object) {
         const ixElement = body.getChildIndex(paragraph);
-        paragraph.replaceText(key, '');
 
         const items = roleData[key];
         for (let idxBp = 0; idxBp < items.length; idxBp++) {
@@ -69,9 +76,11 @@ export default class RoleDoc {
             listItem.setGlyphType(DocumentApp.GlyphType.BULLET);
             listItem.setAttributes(pattr);
         }
-        body.removeChild(paragraph);
+        
+        if (items.length != 0) {
+            body.removeChild(paragraph);
+        }
     }
-
 
     private static getKeyFromText(text: string, keys: string[]): string | null {
         for (const key of keys) {

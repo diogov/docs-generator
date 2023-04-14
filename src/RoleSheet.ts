@@ -13,7 +13,7 @@ export default class RoleSheet {
 
     static readonly KEY_STARTS_WITH = '{{';
     static readonly KEY_ENDS_WITH = '}}';
-
+    public static readonly KEY_OBJECT_REGEX = '{{.*?}}';
 
     private static readonly FIRST_LINE_WITH_ROLE = 1;
     private static readonly CONFIG = 'config';
