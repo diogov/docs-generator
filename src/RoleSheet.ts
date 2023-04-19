@@ -36,8 +36,8 @@ export default class RoleSheet {
             const sheetData = RoleSheet.getSheetData(sheet);
 
             if (name.startsWith(RoleSheet.CONFIG)) {
-                for (let i = 0; i < sheetData.length; i++) {
-                    dataStructured[ sheetData[i][0] ] = sheetData[i][1];
+                for (let iLine = 0; iLine < sheetData.length; iLine++) {
+                    dataStructured[ sheetData[iLine][0] ] = sheetData[iLine][1];
                 }
             }
             else if (name.startsWith(RoleSheet.ROLE)) {
@@ -111,9 +111,9 @@ export default class RoleSheet {
 
     private static getRolesLinesNumbersPlusLastLine(sheetData: string[][]): number[] {
         const rolesLines : number[] = [];
-        for (let i = RoleSheet.FIRST_LINE_WITH_ROLE; i < sheetData.length; i++) {
-            if (sheetData[i][0] != '') {
-                rolesLines.push(i);
+        for (let iLine = RoleSheet.FIRST_LINE_WITH_ROLE; iLine < sheetData.length; iLine++) {
+            if (sheetData[iLine][0] != '') {
+                rolesLines.push(iLine);
             }
         }
         rolesLines.push(sheetData.length);

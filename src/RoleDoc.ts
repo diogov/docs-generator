@@ -1,5 +1,5 @@
 import RoleSheet from './RoleSheet';
-import RoleDocRemoval from './RoleDocRemoval';
+import RoleDocCleaner from './RoleDocCleaner';
 
 export default class RoleDoc {
 
@@ -19,10 +19,10 @@ export default class RoleDoc {
             RoleDoc.processParagraph(body, paragraph, key, roleData);
         });
 
-        RoleDocRemoval.removeSectionsContainingNoMatchedKeys(body);
+        RoleDocCleaner.removeSectionsContainingNoMatchedKeys(body);
         doc.saveAndClose();
         
-        RoleDocRemoval.removeLastEmptyParagraphFromScriptToAvoidBlankPage(doc.getId());
+        RoleDocCleaner.removeLastEmptyParagraphFromScriptToAvoidBlankPage(doc.getId());
     }
 
     private static processParagraph(body, paragraph, key: string | null, roleData: object): void {
