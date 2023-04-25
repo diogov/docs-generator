@@ -2,6 +2,7 @@ import RoleFile from './RoleFile';
 import RoleSheet from './RoleSheet';
 import RoleDoc from './RoleDoc';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function updateRoleDocs() {
     const spreadsheet = SpreadsheetApp.getActive();
 
@@ -27,7 +28,8 @@ function updateRoleDocs() {
     });
 }
 
-function onOpen() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onOpen() { 
     const ui = SpreadsheetApp.getUi();
 
     ui.createMenu('Generate')

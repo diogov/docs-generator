@@ -1,0 +1,21 @@
+name: Role Docs Creator Deployment
+run-name: ${{ github.ref_name }} deployment
+on: push
+jobs:
+  Deploy-AppsScript:
+    runs-on: macos-13
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: mv .clasp-prd.json .clasp.json
+      - run: |
+          gpg \
+            --quiet --batch --yes --decrypt --passphrase="${{ secrets.CLASP_SECRET }}" \
+            --output $HOME/.clasprc.json .clasprc-prd.json.gpg
+      - name: Linting
+        run: npx eslint src/*
+      - run: npx clasp push -f
