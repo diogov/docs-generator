@@ -3,7 +3,7 @@ import RoleSheet from './RoleSheet';
 import RoleDoc from './RoleDoc';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function updateRoleDocs() {
+function createRoleDocs() {
     const spreadsheet = SpreadsheetApp.getActive();
 
     const scriptProps = PropertiesService.getScriptProperties();
@@ -33,6 +33,6 @@ function onOpen() {
     const ui = SpreadsheetApp.getUi();
 
     ui.createMenu('Generate')
-        .addItem('Update Role Docs', 'updateRoleDocs')
+        .addItem('Create Role Docs', 'createRoleDocs')
         .addToUi();
 }

@@ -1,21 +1,35 @@
-name: Role Docs Creator Deployment
-run-name: ${{ github.ref_name }} deployment
+name: Deployment
+run-name: Docs Automation Deployment
 on: push
 jobs:
-  Deploy-AppsScript:
+  setup:
     runs-on: macos-13
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Install Node
+        uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm ci
-      - run: mv .clasp-prd.json .clasp.json
-      - run: |
+      - name: Install clasp globally
+        run: npm install -g @google/clasp 
+      - name: Decrypt clasp login configuration
+        run: |
           gpg \
             --quiet --batch --yes --decrypt --passphrase="${{ secrets.CLASP_SECRET }}" \
             --output $HOME/.clasprc.json .clasprc-prd.json.gpg
-      - name: Linting
-        run: npx eslint src/*
-      - run: npx clasp push -f
+      - name: candidate-flyer-merger Deployment
+        working-directory: candidate-flyer-merger
+        run: |
+          mv .clasp-prd.json .clasp.json
+          clasp push -f
+      - name: doc-pdf-exporter Deployment
+        working-directory: doc-pdf-exporter
+        run: |
+          mv .clasp-prd.json .clasp.json
+          clasp push -f
+      - name: role-docs-creator Deployment
+        working-directory: role-docs-creator
+        run: |
+          mv .clasp-prd.json .clasp.json
+          clasp push -f
